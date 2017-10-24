@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="surveyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Answers">
+          <Key>
+            <PropertyRef Name="AnswerId" />
+          </Key>
+          <Property Name="AnswerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Text" Type="varchar" MaxLength="500" />
+          <Property Name="QuestionId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Questions">
+          <Key>
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="QuestionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SurveyId" Type="int" Nullable="false" />
+          <Property Name="Text" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="Survey">
+          <Key>
+            <PropertyRef Name="SurveyId" />
+          </Key>
+          <Property Name="SurveyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="70" />
+        </EntityType>
+        <EntityType Name="Takers">
+          <Key>
+            <PropertyRef Name="TakerId" />
+          </Key>
+          <Property Name="TakerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="AnswerID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_QuestionAnswers">
+          <End Role="Questions" Type="Self.Questions" Multiplicity="1" />
+          <End Role="Answers" Type="Self.Answers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Questions">
+              <PropertyRef Name="QuestionId" />
+            </Principal>
+            <Dependent Role="Answers">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SurveyQuestion">
+          <End Role="Survey" Type="Self.Survey" Multiplicity="1" />
+          <End Role="Questions" Type="Self.Questions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="SurveyId" />
+            </Principal>
+            <Dependent Role="Questions">
+              <PropertyRef Name="SurveyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spI_Taker" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="QuestionID" Type="int" Mode="In" />
+          <Parameter Name="AnswerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sps_graphData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sps_qa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="surveyid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sps_QAforSurvey" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="surveyid" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="surveyModelStoreContainer">
+          <EntitySet Name="Answers" EntityType="Self.Answers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Questions" EntityType="Self.Questions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Survey" EntityType="Self.Survey" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Takers" EntityType="Self.Takers" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_QuestionAnswers" Association="Self.FK_QuestionAnswers">
+            <End Role="Questions" EntitySet="Questions" />
+            <End Role="Answers" EntitySet="Answers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SurveyQuestion" Association="Self.FK_SurveyQuestion">
+            <End Role="Survey" EntitySet="Survey" />
+            <End Role="Questions" EntitySet="Questions" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="surveyModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="surveyEF" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Answers" EntityType="surveyModel.Answer" />
+          <EntitySet Name="Questions" EntityType="surveyModel.Question" />
+          <EntitySet Name="Surveys" EntityType="surveyModel.Survey" />
+          <EntitySet Name="Takers" EntityType="surveyModel.Taker" />
+          <AssociationSet Name="FK_QuestionAnswers" Association="surveyModel.FK_QuestionAnswers">
+            <End Role="Questions" EntitySet="Questions" />
+            <End Role="Answers" EntitySet="Answers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SurveyQuestion" Association="surveyModel.FK_SurveyQuestion">
+            <End Role="Survey" EntitySet="Surveys" />
+            <End Role="Questions" EntitySet="Questions" />
+          </AssociationSet>
+          <FunctionImport Name="sps_QAforSurvey" ReturnType="Collection(surveyModel.sps_QAforSurvey_Result)">
+          <Parameter Name="surveyid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spI_Taker">
+            <Parameter Name="QuestionID" Mode="In" Type="Int32" />
+            <Parameter Name="AnswerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sps_graphData" ReturnType="Collection(surveyModel.sps_graphData_Result)" />
+        </EntityContainer>
+        <EntityType Name="Answer">
+          <Key>
+            <PropertyRef Name="AnswerId" />
+          </Key>
+          <Property Name="AnswerId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="QuestionId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Question" Relationship="surveyModel.FK_QuestionAnswers" FromRole="Answers" ToRole="Questions" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="QuestionId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="SurveyId" Type="Int32" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Answers" Relationship="surveyModel.FK_QuestionAnswers" FromRole="Questions" ToRole="Answers" />
+          <NavigationProperty Name="Survey" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Questions" ToRole="Survey" />
+        </EntityType>
+        <EntityType Name="Survey">
+          <Key>
+            <PropertyRef Name="SurveyId" />
+          </Key>
+          <Property Name="SurveyId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="70" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Questions" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Survey" ToRole="Questions" />
+        </EntityType>
+        <EntityType Name="Taker">
+          <Key>
+            <PropertyRef Name="TakerId" />
+          </Key>
+          <Property Name="TakerId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="AnswerID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_QuestionAnswers">
+          <End Role="Questions" Type="surveyModel.Question" Multiplicity="1" />
+          <End Role="Answers" Type="surveyModel.Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Questions">
+              <PropertyRef Name="QuestionId" />
+            </Principal>
+            <Dependent Role="Answers">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SurveyQuestion">
+          <End Role="Survey" Type="surveyModel.Survey" Multiplicity="1" />
+          <End Role="Questions" Type="surveyModel.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="SurveyId" />
+            </Principal>
+            <Dependent Role="Questions">
+              <PropertyRef Name="SurveyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="sps_QAforSurvey_Result">
+          <Property Type="Int32" Name="QuestionId" Nullable="false" />
+          <Property Type="Int32" Name="SurveyId" Nullable="false" />
+          <Property Type="String" Name="Text" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="AnswerId" Nullable="false" />
+          <Property Type="String" Name="Text1" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="QuestionId1" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sps_graphData_Result">
+          <Property Type="Int32" Name="QuestionID" Nullable="false" />
+          <Property Type="Int32" Name="AnswerID" Nullable="false" />
+          <Property Type="Int32" Name="numbers" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="surveyModelStoreContainer" CdmEntityContainer="surveyEF">
+          <EntitySetMapping Name="Answers">
+            <EntityTypeMapping TypeName="surveyModel.Answer">
+              <MappingFragment StoreEntitySet="Answers">
+                <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Questions">
+            <EntityTypeMapping TypeName="surveyModel.Question">
+              <MappingFragment StoreEntitySet="Questions">
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Surveys">
+            <EntityTypeMapping TypeName="surveyModel.Survey">
+              <MappingFragment StoreEntitySet="Survey">
+                <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Takers">
+            <EntityTypeMapping TypeName="surveyModel.Taker">
+              <MappingFragment StoreEntitySet="Takers">
+                <ScalarProperty Name="TakerId" ColumnName="TakerId" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="surveyModel.Taker">
+              <ModificationFunctionMapping>
+                <InsertFunction FunctionName="surveyModel.Store.spI_Taker">
+                  <ScalarProperty Name="AnswerID" ParameterName="AnswerID" />
+                  <ScalarProperty Name="QuestionID" ParameterName="QuestionID" />
+                </InsertFunction>
+              </ModificationFunctionMapping>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sps_QAforSurvey" FunctionName="surveyModel.Store.sps_QAforSurvey">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="surveyModel.sps_QAforSurvey_Result">
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+                <ScalarProperty Name="Text1" ColumnName="Text1" />
+                <ScalarProperty Name="QuestionId1" ColumnName="QuestionId1" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="spI_Taker" FunctionName="surveyModel.Store.spI_Taker" />
+          <FunctionImportMapping FunctionImportName="sps_graphData" FunctionName="surveyModel.Store.sps_graphData">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="surveyModel.sps_graphData_Result">
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+                <ScalarProperty Name="numbers" ColumnName="numbers" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

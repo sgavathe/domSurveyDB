@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="surveyModelStoreContainer" CdmEntityContainer="surveyEF">
+    <EntitySetMapping Name="Answers">
+      <EntityTypeMapping TypeName="surveyModel.Answer">
+        <MappingFragment StoreEntitySet="Answers">
+          <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+          <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Questions">
+      <EntityTypeMapping TypeName="surveyModel.Question">
+        <MappingFragment StoreEntitySet="Questions">
+          <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+          <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Surveys">
+      <EntityTypeMapping TypeName="surveyModel.Survey">
+        <MappingFragment StoreEntitySet="Survey">
+          <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Takers">
+      <EntityTypeMapping TypeName="surveyModel.Taker">
+        <MappingFragment StoreEntitySet="Takers">
+          <ScalarProperty Name="TakerId" ColumnName="TakerId" />
+          <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+          <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="surveyModel.Taker">
+        <ModificationFunctionMapping>
+          <InsertFunction FunctionName="surveyModel.Store.spI_Taker">
+            <ScalarProperty Name="AnswerID" ParameterName="AnswerID" />
+            <ScalarProperty Name="QuestionID" ParameterName="QuestionID" />
+          </InsertFunction>
+        </ModificationFunctionMapping>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="sps_QAforSurvey" FunctionName="surveyModel.Store.sps_QAforSurvey">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="surveyModel.sps_QAforSurvey_Result">
+          <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+          <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+          <ScalarProperty Name="AnswerId" ColumnName="AnswerId" />
+          <ScalarProperty Name="Text1" ColumnName="Text1" />
+          <ScalarProperty Name="QuestionId1" ColumnName="QuestionId1" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="spI_Taker" FunctionName="surveyModel.Store.spI_Taker" />
+    <FunctionImportMapping FunctionImportName="sps_graphData" FunctionName="surveyModel.Store.sps_graphData">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="surveyModel.sps_graphData_Result">
+          <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+          <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+          <ScalarProperty Name="numbers" ColumnName="numbers" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+  </EntityContainerMapping>
+</Mapping>

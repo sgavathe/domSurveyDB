@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "SurveyTaker";
+}
+ 
+<div id="body"  ng-controller="homeCtrl" class="container">  
+    <div class="row" >
+       <div class="col-md-12">
+           
+               <div data-ng-repeat ="qSet in survey.Questions  track by $index " class="col-md-8" >
+                    <div class="panel panel-primary"   >
+                        <div class="panel-heading" >
+                            <h4>
+                                Question {{qSet.QuestionId}}
+                                <p> {{qSet.Text}}  </p>
+                            </h4>
+                                </div>                               
+                        <div   class="panel-body">
+                            <div data-ng-repeat ="ans in qSet.Answers" >
+                                <div class="row">
+
+                                    <h4>
+                                    <div class="col-md-2">
+                                         {{ans.Text}} 
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type ="radio"   name ="rdBtn{{qSet.QuestionId}}"  value="{{ans.AnswerId}}" ng-model="qSet.AnswerChoice">     
+                                    </div>
+                                    </h4> 
+                                </div>
+                            </div>
+                        </div>
+ 
+                    <br />
+                </div>
+            </div>
+
+       </div> 
+    </div> 
+    <div class="row">
+        <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary btn-lg " ng-click="Save()"> Submit</button>
+            </div>
+        <div class="col-md-2"></div>
+        </div>
+</div>
+
+ @Scripts.Render("~/bundles/jquery")
+
+<script src="~/Scripts/App.js"></script>
+@*<script src="~/Scripts/ServiceFile.js"></script>*@
+
+
+@* Uncomment the script tag below if you are including Servicefile.js *@
+<script type="text/javascript">
+
+         myApp.controller('homeCtrl', function ($scope, $http) {
+         
+             $scope.GetQuestions = function () {
+                 var id = 1;
+                 $http.get(url + id).success(function (response) {
+                     $scope.survey = response;
+                      
+                 });
+             };
+
+             $scope.GetQuestions();
+ 
+             $scope.Save = function () {
+                 console.log($scope.survey);
+
+                 $http.post(url, $scope.survey).success(function (response) {
+                     window.location.href = "/Home/Index";
+                 })
+             }
+
+
+    });
+</script>

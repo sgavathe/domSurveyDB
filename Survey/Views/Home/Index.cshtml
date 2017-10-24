@@ -1,0 +1,156 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="body" ng-controller="dshbrdCtrl" class="container">
+    <div class="row" >
+       <div class="col-md-4">
+           @*<h1>Welcome to Professional Development Day!</h1>*@
+       </div>
+        <div class="col-md-4">
+             <button type="button" class="btn btn-primary btn-lg " ng-click ="TakeSurvey()"> Take Survey </button>
+            
+       </div>
+        <div class="col-md-4">
+            @*<h1>Welcome to Professional Development Day!</h1>*@
+        </div>
+        </div>
+    <hr />
+     
+     <div class="row" >
+       <div class="col-md-12">
+           
+               <div data-ng-repeat ="qSet in survey.Questions  track by $index " class="col-md-10" >
+                    <div class="panel panel-primary"   >
+                        <div class="panel-heading" >
+                            <h4>
+                                Question {{qSet.QuestionId}}
+                                <p> {{qSet.Text}}  </p>
+                            </h4> 
+                        </div>                               
+                        <div   class="panel-body">
+                            <div class="row">
+                                    <div class="col-md-6">
+                                         <chart value="qSet.ChartData" type="Pie" width="250" height="250"></chart>
+                                    </div> 
+                                <div class="col-md-2">
+                                    <table class="table table-striped table-hover table-bordered ">
+                                        <thead>
+                                            <tr>
+                                                <th>Answer</th>
+                                                <th>Count</th>
+                                            </tr>
+                                            
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="ans in qSet.Answers">
+                                                <td>
+                                                    {{ans.Text}}
+                                                </td>
+                                                <td>{{ans.Numbers}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                </div> 
+                        </div>
+ 
+                    <br />
+                </div>
+            </div>
+
+       </div> 
+    </div> 
+    <div class="row">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary" ng-click ="TakeSurvey()"> Take Survey </button>
+        </div>
+    </div>
+</div>
+    </div>
+
+ @Scripts.Render("~/bundles/jquery")
+
+@*<script src="~/Scripts/ServiceFile.js"></script>*@
+
+@* Uncomment the script tag below if you are including Servicefile.js *@
+ 
+
+@*<script src="~/Scripts/Chart.js"></script>*@
+<script src="~/Scripts/chartjs-directive.js"></script> 
+ 
+<script src="~/Scripts/App.js"></script>
+ <script type="text/javascript">
+      
+
+
+
+    var url = '/Api/Dashboard/';
+    myApp.controller('dshbrdCtrl', function ($scope, $http, graphs) {
+        $scope.TakeSurvey = function () {
+
+            window.location.href =  "/Home/SurveyTaker";
+        }
+
+
+        $scope.GetQuestions = function () {
+            var id = 1;
+            $http.get(url + id).success(function (response) {
+                $scope.survey = response;
+                console.log($scope.survey);
+
+                $scope.items = new Array();
+                angular.forEach($scope.survey.Questions, function (q) {
+                    var count = 0;
+                    var grph = new graphs();
+                    $scope.items = new Array();
+                    angular.forEach(q.Answers, function (v) {
+                        grph = new graphs();
+                        count = count + 1
+                        grph.value = v.Numbers;
+                        if (count == 1) {
+                            grph.color = "#33cc33";
+                            grph.label = v.Text
+
+                        }
+                        if (count == 2) {
+                            grph.color = "#ff3300";
+                            grph.label = v.Text
+                        }
+                        if (count == 3) {
+                            grph.color = "#69D2E7"
+                            count = 0;
+                            grph.label = v.Text
+                        }
+                        $scope.items.push(grph);
+                    });
+                      
+                    console.log(grph);
+                    q.ChartData = { "data": $scope.items }; 
+                }); 
+            });
+        };
+
+
+         
+        $scope.GetQuestions();
+       
+        var data = [
+          {
+              value: Math.floor((Math.random() * 100) + 1),
+              color: "#F38630"
+          },
+          {
+              value: Math.floor((Math.random() * 100) + 1),
+              color: "#E0E4CC"
+          },
+          {
+              value: Math.floor((Math.random() * 100) + 1),
+              color: "#69D2E7"
+          }
+        ];
+        $scope.myChart = { "data": data };
+ 
+    });
+</script>

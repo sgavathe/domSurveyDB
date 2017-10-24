@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="surveyModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="surveyEntities" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="Surveys" EntityType="surveyModel.Survey" />
+    <EntitySet Name="Questions" EntityType="surveyModel.Question" />
+    <AssociationSet Name="SurveyQuestion" Association="surveyModel.SurveyQuestion">
+      <End Role="Survey" EntitySet="Surveys" />
+      <End Role="Question" EntitySet="Questions" />
+    </AssociationSet>
+    <EntitySet Name="Answers" EntityType="surveyModel.Answers" />
+    <AssociationSet Name="QuestionAnswers" Association="surveyModel.QuestionAnswers">
+      <End Role="Question" EntitySet="Questions" />
+      <End Role="Answers" EntitySet="Answers" />
+    </AssociationSet>
+    <EntitySet Name="Takers" EntityType="surveyModel.Taker" />
+    <EntitySet Name="Survey1" EntityType="surveyModel.Survey1" />
+    <AssociationSet Name="FK_SurveyQuestion" Association="surveyModel.FK_SurveyQuestion">
+      <End Role="Survey1" EntitySet="Survey1" />
+      <End Role="Question" EntitySet="Questions" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Survey">
+    <Key>
+      <PropertyRef Name="SurveyId" />
+    </Key>
+    <Property Type="Int32" Name="SurveyId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Name" Unicode="false" FixedLength="false" MaxLength="70" />
+    <NavigationProperty Name="Questions" Relationship="surveyModel.SurveyQuestion" FromRole="Survey" ToRole="Question" />
+  </EntityType>
+  <EntityType Name="Question">
+    <Key>
+      <PropertyRef Name="QuestionId" />
+    </Key>
+    <Property Type="Int32" Name="QuestionId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <NavigationProperty Name="Survey" Relationship="surveyModel.SurveyQuestion" FromRole="Question" ToRole="Survey" />
+    <Property Type="Int32" Name="SurveyId" Nullable="false" />
+    <Property Type="String" Name="Text" Unicode="false" FixedLength="false" MaxLength="200" />
+    <NavigationProperty Name="Answers" Relationship="surveyModel.QuestionAnswers" FromRole="Question" ToRole="Answers" />
+    <NavigationProperty Name="Survey1" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Question" ToRole="Survey1" />
+  </EntityType>
+  <Association Name="SurveyQuestion">
+    <End Type="surveyModel.Survey" Role="Survey" Multiplicity="1" />
+    <End Type="surveyModel.Question" Role="Question" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Survey">
+        <PropertyRef Name="SurveyId" />
+      </Principal>
+      <Dependent Role="Question">
+        <PropertyRef Name="SurveyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Answers">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+    </Key>
+    <Property Type="Int32" Name="AnswerId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Text" Unicode="false" FixedLength="false" MaxLength="500" />
+    <NavigationProperty Name="Question" Relationship="surveyModel.QuestionAnswers" FromRole="Answers" ToRole="Question" />
+    <Property Type="Int32" Name="QuestionId" Nullable="false" />
+  </EntityType>
+  <Association Name="QuestionAnswers">
+    <End Type="surveyModel.Question" Role="Question" Multiplicity="1" />
+    <End Type="surveyModel.Answers" Role="Answers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Question">
+        <PropertyRef Name="QuestionId" />
+      </Principal>
+      <Dependent Role="Answers">
+        <PropertyRef Name="QuestionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Taker">
+    <Key>
+      <PropertyRef Name="TakerId" />
+    </Key>
+    <Property Type="Int32" Name="TakerId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="QuestionID" Nullable="false" />
+    <Property Type="Int32" Name="AnswerID" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Survey1">
+    <Key>
+      <PropertyRef Name="SurveyId" />
+    </Key>
+    <Property Type="Int32" Name="SurveyId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Name" MaxLength="70" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Questions" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Survey1" ToRole="Question" />
+  </EntityType>
+  <Association Name="FK_SurveyQuestion">
+    <End Type="surveyModel.Survey1" Role="Survey1" Multiplicity="1" />
+    <End Type="surveyModel.Question" Role="Question" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Survey1">
+        <PropertyRef Name="SurveyId" />
+      </Principal>
+      <Dependent Role="Question">
+        <PropertyRef Name="SurveyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

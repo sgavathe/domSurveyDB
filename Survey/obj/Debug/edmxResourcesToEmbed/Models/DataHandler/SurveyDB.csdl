@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="surveyModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="surveyEF" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="Answers" EntityType="surveyModel.Answer" />
+    <EntitySet Name="Questions" EntityType="surveyModel.Question" />
+    <EntitySet Name="Surveys" EntityType="surveyModel.Survey" />
+    <EntitySet Name="Takers" EntityType="surveyModel.Taker" />
+    <AssociationSet Name="FK_QuestionAnswers" Association="surveyModel.FK_QuestionAnswers">
+      <End Role="Questions" EntitySet="Questions" />
+      <End Role="Answers" EntitySet="Answers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SurveyQuestion" Association="surveyModel.FK_SurveyQuestion">
+      <End Role="Survey" EntitySet="Surveys" />
+      <End Role="Questions" EntitySet="Questions" />
+    </AssociationSet>
+    <FunctionImport Name="sps_QAforSurvey" ReturnType="Collection(surveyModel.sps_QAforSurvey_Result)">
+      <Parameter Name="surveyid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="spI_Taker">
+      <Parameter Name="QuestionID" Mode="In" Type="Int32" />
+      <Parameter Name="AnswerID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sps_graphData" ReturnType="Collection(surveyModel.sps_graphData_Result)" />
+  </EntityContainer>
+  <EntityType Name="Answer">
+    <Key>
+      <PropertyRef Name="AnswerId" />
+    </Key>
+    <Property Name="AnswerId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Text" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+    <Property Name="QuestionId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Question" Relationship="surveyModel.FK_QuestionAnswers" FromRole="Answers" ToRole="Questions" />
+  </EntityType>
+  <EntityType Name="Question">
+    <Key>
+      <PropertyRef Name="QuestionId" />
+    </Key>
+    <Property Name="QuestionId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="SurveyId" Type="Int32" Nullable="false" />
+    <Property Name="Text" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+    <NavigationProperty Name="Answers" Relationship="surveyModel.FK_QuestionAnswers" FromRole="Questions" ToRole="Answers" />
+    <NavigationProperty Name="Survey" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Questions" ToRole="Survey" />
+  </EntityType>
+  <EntityType Name="Survey">
+    <Key>
+      <PropertyRef Name="SurveyId" />
+    </Key>
+    <Property Name="SurveyId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="70" Unicode="false" FixedLength="false" />
+    <NavigationProperty Name="Questions" Relationship="surveyModel.FK_SurveyQuestion" FromRole="Survey" ToRole="Questions" />
+  </EntityType>
+  <EntityType Name="Taker">
+    <Key>
+      <PropertyRef Name="TakerId" />
+    </Key>
+    <Property Name="TakerId" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="QuestionID" Type="Int32" Nullable="false" />
+    <Property Name="AnswerID" Type="Int32" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_QuestionAnswers">
+    <End Role="Questions" Type="surveyModel.Question" Multiplicity="1" />
+    <End Role="Answers" Type="surveyModel.Answer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Questions">
+        <PropertyRef Name="QuestionId" />
+      </Principal>
+      <Dependent Role="Answers">
+        <PropertyRef Name="QuestionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SurveyQuestion">
+    <End Role="Survey" Type="surveyModel.Survey" Multiplicity="1" />
+    <End Role="Questions" Type="surveyModel.Question" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Survey">
+        <PropertyRef Name="SurveyId" />
+      </Principal>
+      <Dependent Role="Questions">
+        <PropertyRef Name="SurveyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <ComplexType Name="sps_QAforSurvey_Result">
+    <Property Type="Int32" Name="QuestionId" Nullable="false" />
+    <Property Type="Int32" Name="SurveyId" Nullable="false" />
+    <Property Type="String" Name="Text" Nullable="true" MaxLength="200" />
+    <Property Type="Int32" Name="AnswerId" Nullable="false" />
+    <Property Type="String" Name="Text1" Nullable="true" MaxLength="500" />
+    <Property Type="Int32" Name="QuestionId1" Nullable="false" />
+  </ComplexType>
+  <ComplexType Name="sps_graphData_Result">
+    <Property Type="Int32" Name="QuestionID" Nullable="false" />
+    <Property Type="Int32" Name="AnswerID" Nullable="false" />
+    <Property Type="Int32" Name="numbers" Nullable="true" />
+  </ComplexType>
+</Schema>
